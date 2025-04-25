@@ -13,10 +13,19 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:5174', 'https://smartplay-frontend.vercel.app'], 
-  credentials: true
-}));
+const corsOptions = {
+  origin: ['http://localhost:5173', 'http://localhost:5174', 'https://smartplay-frontend.vercel.app'],  // Add Vercel frontend URL
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],  // Allow the required methods
+  allowedHeaders: ['Content-Type', 'Authorization'],  // Allow specific headers if needed
+};
+
+// Use CORS with the options
+app.use(cors(corsOptions));
+
+// Allow OPTIONS preflight requests (handle preflight request)
+app.options('*', cors(corsOptions));  // This allows all OPTIONS requests
+
 app.use(express.json());
 
 // Connect to MongoDB
@@ -52,4 +61,4 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`)); 
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
